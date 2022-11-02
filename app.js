@@ -1,9 +1,7 @@
-import express from 'express';
+import dotenv from 'dotenv';
+import Server from './models/server.js'
+dotenv.config();
 
-const app = express();
+const server = new Server();
 
-app.get('/', function (req, res) {
-    res.send('Servicio del Cliente');
-});
-
-app.listen(8080);
+server.listen()
