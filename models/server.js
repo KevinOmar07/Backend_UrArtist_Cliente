@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import cliente from '../routes/cliente.routes.js'
+// import clientea  from '../database/config.db.js'
 
 class Server {
     constructor() {
