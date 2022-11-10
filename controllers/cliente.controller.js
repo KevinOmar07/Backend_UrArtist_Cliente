@@ -17,45 +17,45 @@ const clienteGet = async (req, res = response) => {
     const clientes = await bdCliente.cliente.findAll();
 
     res.json({
-        msg: 'Clinetes obtenidos',
+        msg: 'Clientes obtenidos',
         clientes
     });
 }
 
-const clientePut = (req, res = response) => {
+const clientePut = async (req, res = response) => {
 
-    const id =  req.params.idCliente;
+    const idCliente =  req.params.idCliente;
+    const { id, password, ...resto } = req.body;
+
+    // validar contraseña en la base de datos
+    if ( password ){
+        const salts = bcryptjs.genSaltSync();
+        resto.password = bcryptjs.hashSync(password, salts);
+    }
+
+    const cliente = await bdCliente.cliente.update(resto, {where:{id: idCliente}});
 
     res.json({
         msg: 'Servicio del Cliente put',
-        id
+        cliente
     });
 }
 
 const clienteCreate = async (req, res = response) => {
 
-    const {mail, password, number_phone} = req.body;
-    const data = req.body;
-    
-    // Verificar si el correo existe
-    const mailExixstente = await bdCliente.cliente.findOne({mail})
-    if (mailExixstente){
-        return res.status(400).json({
-            msg: 'El correo ya esta registrado'
-        })
-    }
+    const {name, lastname, mail, password, photo_profile, number_phone} = req.body;
+    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile, number_phone });
     
     // Encriptar contraseña
     const salts = bcryptjs.genSaltSync();
-    data.password = bcryptjs.hashSync(password, salts);
-    data.mail = bcryptjs.hashSync(mail, salts);
-    data.number_phone = bcryptjs.hashSync(number_phone, salts);
+    client.password = bcryptjs.hashSync(password, salts);
     
-    // const cliente = await bdCliente.cliente.create(req.body);
+    // Guardar en la BD
+    await client.save(); 
     
     res.json({
-        msg: 'Servicio del Cliente create',
-        data
+        msg: 'Cliente registrado',
+        client
     });
 }
 

@@ -15,6 +15,11 @@ const cliente = getData.sequelize.define('clientes', {
     number_phone: Sequelize.STRING,
 })
 
+// cliente.toJSON = function() {
+//     const { createdAT, updatedAT, password, ...client } = this.toObject();
+//     return client;
+// }
+
 export const bdCliente = {
     cliente
 }
