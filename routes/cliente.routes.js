@@ -1,5 +1,5 @@
-import {Router} from 'express'
-import {check} from 'express-validator'
+import { Router } from 'express'
+import { check } from 'express-validator'
 import { clienteController } from '../controllers/cliente.controller.js';
 import { validacionesBD } from '../helpers/db-valiador.js';
 import { validaciones } from '../middlewares/validar-campos.js';
@@ -7,6 +7,7 @@ import { validaciones } from '../middlewares/validar-campos.js';
 const router =Router();
 
 router.get('/get/:idCliente', [
+    check('idCliente', 'El ID es invalido').isInt(),
     check('idCliente').custom(validacionesBD.clienteExiste),
     validaciones.validarCampos,
 ],clienteController.clienteGetId);
@@ -14,6 +15,7 @@ router.get('/get/:idCliente', [
 router.get('/getAll', clienteController.clienteGet);
 
 router.put('/update/:idCliente', [
+    check('idCliente', 'El ID es invalido').isInt(),
     check('idCliente').custom(validacionesBD.clienteExiste),
     validaciones.validarCampos,
 ], clienteController.clientePut);
@@ -26,6 +28,10 @@ router.post('/create', [
     validaciones.validarCampos,
 ], clienteController.clienteCreate);
 
-router.delete('/delete/:idCliente', clienteController.clienteDelete);
+router.delete('/delete/:idCliente', [
+    check('idCliente', 'El ID es invalido').isInt(),
+    check('idCliente').custom(validacionesBD.clienteExiste),
+    validaciones.validarCampos,
+],clienteController.clienteDelete);
 
 export default router

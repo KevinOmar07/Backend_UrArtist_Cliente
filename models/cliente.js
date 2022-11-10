@@ -13,8 +13,12 @@ const cliente = getData.sequelize.define('clientes', {
     password: Sequelize.STRING,
     photo_profile: Sequelize.STRING,
     number_phone: Sequelize.STRING,
-})
-
+},{
+    Sequelize,
+    paranoid: true,
+    deletedAt: 'EliminaciónTemporal'
+});
+    
 // cliente.toJSON = function() {
 //     const { createdAT, updatedAT, password, ...client } = this.toObject();
 //     return client;

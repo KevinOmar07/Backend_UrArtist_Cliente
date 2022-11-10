@@ -14,11 +14,12 @@ const clienteGetId = async(req, res = response) => {
 
 const clienteGet = async (req, res = response) => {
 
-    const clientes = await bdCliente.cliente.findAll();
+    const {count, rows} = await bdCliente.cliente.findAndCountAll();
 
     res.json({
         msg: 'Clientes obtenidos',
-        clientes
+        toatl: count,
+        clientes: rows
     });
 }
 
@@ -36,7 +37,7 @@ const clientePut = async (req, res = response) => {
     const cliente = await bdCliente.cliente.update(resto, {where:{id: idCliente}});
 
     res.json({
-        msg: 'Servicio del Cliente put',
+        msg: 'Datos actualizados',
         cliente
     });
 }
@@ -59,10 +60,16 @@ const clienteCreate = async (req, res = response) => {
     });
 }
 
-const clienteDelete = (req, res = response) => {
+const clienteDelete = async (req, res = response) => {
+
+    const id  = req.params.idCliente;
+
+    const eliminado = await bdCliente.cliente.destroy({where: {id}});
 
     res.json({
-        msg: 'Servicio del Cliente delete'
+        msg: 'Cliente eliminado',
+        id,
+        eliminado
     });
 }
 
