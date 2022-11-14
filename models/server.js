@@ -1,12 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import cliente from '../routes/cliente.routes.js'
+import auth from '../routes/auth.routes.js'
 
 class Server {
     constructor() {
         this.app = express();
-        this.port = process.env.PORT
-        this.clientePath = '/UrArtist/cliente'
+        this.port = process.env.PORT;
+        this.clientePath = '/UrArtist/cliente';
+        this.authPath = '/UrArtist/auth';
 
         //Middlewares
         this.middleware();
@@ -29,6 +31,7 @@ class Server {
 
     routes() {
         this.app.use(this.clientePath, cliente);
+        this.app.use(this.authPath, auth);
     }
 
     listen() {
