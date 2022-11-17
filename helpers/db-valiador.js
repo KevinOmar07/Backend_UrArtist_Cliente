@@ -1,4 +1,5 @@
 import { bdCliente } from '../models/cliente.js';
+import { bdFavorito } from '../models/favorito.js';
 
 const emailExiste = async (mail = '') => {
     const mailExixstente = await bdCliente.cliente.findOne({where: {mail}});
@@ -14,7 +15,15 @@ const clienteExiste = async (id = '') => {
     }
 }
 
+const favoritoExiste = async (id = '') => {
+    const favoritoExistente = await bdFavorito.favorito.findByPk(id);
+    if (!favoritoExistente){
+        throw new Error(`El favorito con el id ${id}, no existe`)
+    }
+}
+
 export const validacionesBD = {
     emailExiste,
-    clienteExiste
+    clienteExiste,
+    favoritoExiste
 }
