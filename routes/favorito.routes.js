@@ -6,11 +6,12 @@ import { validaciones } from '../middlewares/validar-campos.js';
 
 const router =Router();
 
-router.get('/getAll', favoritoController.favoritoGet);
+router.get('/get/:idCliente', favoritoController.favoritoGet);
 
 router.post('/create', [
-    check('id_cliente', 'El id del cliente es obligatorio').not().isEmpty(),
-    check('id_artista', 'El id del artista es obligatorio').not().isEmpty(),
+    check('datos.id_cliente', 'El id del cliente es obligatorio').not().isEmpty(),
+    check('datos.id_artista', 'El id del artista es obligatorio').not().isEmpty(),
+    check('datos').custom(validacionesBD.favoritoDuplicado),
     validaciones.validarCampos,
 ], favoritoController.favoritoCreate);
 

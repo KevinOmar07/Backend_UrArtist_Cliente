@@ -18,7 +18,7 @@ const clienteGet = async (req, res = response) => {
 
     res.json({
         msg: 'Clientes obtenidos',
-        toatl: count,
+        total: count,
         clientes: rows
     });
 }

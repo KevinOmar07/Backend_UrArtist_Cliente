@@ -1,6 +1,6 @@
 import {response} from 'express'
 import { bdCliente } from '../models/cliente.js';
-import { Token } from '../helpers/generar-JWT.js';
+import { Token } from '../helpers/generar-jwt.js';
 import bcryptjs from 'bcryptjs';
 
 const login = async (req, res = response) => {

@@ -9,6 +9,8 @@ const favorito = getData.sequelize.define('favoritos', {
     },
     id_cliente: Sequelize.INTEGER,
     id_artista: Sequelize.INTEGER,
+    artists_name: Sequelize.STRING,
+    photo_profile: Sequelize.STRING
 });
     
 // cliente.toJSON = function() {

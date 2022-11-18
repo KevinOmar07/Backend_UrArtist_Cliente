@@ -22,8 +22,27 @@ const favoritoExiste = async (id = '') => {
     }
 }
 
+const favoritoDuplicado = async (datos) => {
+    console.log(`cliente: ${datos.id_cliente} | artista: ${datos.id_artista}`)
+    const favoritoDoble = await bdFavorito.favorito.findOne({
+        where: {
+            id_cliente: datos.id_cliente,
+            id_artista: datos.id_artista
+        }
+    });
+    if (favoritoDoble){
+        throw new Error(`El artista ya ha sido guardado como favorito anteriormente`)
+    }
+}
+
+//            [Op.and]: [
+//    {id_cliente: datos.id_cliente},
+//    {id_artista: datos.id_artista}
+//]
+
 export const validacionesBD = {
     emailExiste,
     clienteExiste,
-    favoritoExiste
+    favoritoExiste,
+    favoritoDuplicado
 }

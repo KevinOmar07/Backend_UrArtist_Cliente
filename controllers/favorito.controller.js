@@ -3,19 +3,20 @@ import { bdFavorito } from '../models/favorito.js'
 
 const favoritoGet = async (req, res = response) => {
 
-    const {count, rows} = await bdFavorito.favorito.findAndCountAll();
+    const {count, rows} = await bdFavorito.favorito.findAndCountAll({where: {id_cliente: req.params.idCliente}});
 
     res.json({
         msg: 'Favoritos obtenidos',
-        toatl: count,
+        total: count,
         favoritos: rows
     });
 }
 
 const favoritoCreate = async (req, res = response) => {
 
-    const {id_cliente, id_artista} = req.body;
-    const favorito = await new bdFavorito.favorito({id_cliente, id_artista});
+    const {id_cliente, id_artista, artists_name, photo_profile} = req.body.datos;
+
+    const favorito = await new bdFavorito.favorito({id_cliente, id_artista,artists_name, photo_profile});
         
     // Guardar en la BD
     await favorito.save(); 
