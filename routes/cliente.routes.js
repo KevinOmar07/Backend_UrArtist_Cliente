@@ -14,6 +14,11 @@ router.get('/get/:idCliente', [
 
 router.get('/getAll', clienteController.clienteGet);
 
+router.get('/validarCorreo', [
+    check('mail').custom(validacionesBD.emailExiste), 
+    validaciones.validarCampos,
+], clienteController.validarCorreo);
+
 router.put('/update/:idCliente', [
     check('idCliente', 'El ID es invalido').isInt(),
     check('idCliente').custom(validacionesBD.clienteExiste),

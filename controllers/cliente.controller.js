@@ -23,6 +23,14 @@ const clienteGet = async (req, res = response) => {
     });
 }
 
+const validarCorreo = async (req, res = response) => {
+
+    res.json({
+        status: true,
+        msg: 'El correo no existe, puede ser registrado',
+    });
+}
+
 const clientePut = async (req, res = response) => {
 
     const idCliente =  req.params.idCliente;
@@ -78,5 +86,6 @@ export const clienteController = {
     clientePut, 
     clienteCreate, 
     clienteDelete,
-    clienteGet
+    clienteGet,
+    validarCorreo
 }
