@@ -53,8 +53,6 @@ const login = async (req, res = response) => {
             datos = cliente;
         }
 
-        console.log(datos.id);
-
         //Generar Token
         const token = await Token.generarJWT(datos.id);
 
