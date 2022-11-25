@@ -8,7 +8,7 @@ const sequelize = new Sequelize(process.env.DBNAME, process.env.USERNAMEDB, proc
     dialect: 'mysql'
 })
 
-sequelize.sync({ force: false})
+sequelize.sync({ force: true})
 .then(() => {
     console.log(' Tablas sincronizadas')
 }).catch((err) => {

@@ -3,6 +3,7 @@ import cors from 'cors';
 import cliente from '../routes/cliente.routes.js'
 import auth from '../routes/auth.routes.js'
 import favorito from '../routes/favorito.routes.js'
+import contrato from '../routes/contrato.routes.js'
 
 class Server {
     constructor() {
@@ -11,12 +12,14 @@ class Server {
         this.clientePath = '/UrArtist/cliente';
         this.authPath = '/UrArtist/auth';
         this.favoritoPath = '/UrArtist/favoritos';
+        this.contratoPath = '/UrArtist/contratos';
 
         //Middlewares
         this.middleware();
 
         //Lectura y parseo del body
         this.app.use(express.json());
+        this.app.use(express.urlencoded({extended: true}));
 
         //Rutas del sevidor
         this.routes();
@@ -34,7 +37,8 @@ class Server {
     routes() {
         this.app.use(this.clientePath, cliente);
         this.app.use(this.authPath, auth);
-        this.app.use(this.favoritoPath, favorito)
+        this.app.use(this.favoritoPath, favorito);
+        this.app.use(this.contratoPath, contrato);
     }
 
     listen() {
