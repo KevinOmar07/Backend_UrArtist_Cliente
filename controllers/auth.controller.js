@@ -2,10 +2,13 @@ import {response} from 'express'
 import { bdCliente } from '../models/cliente.js';
 import { Token } from '../helpers/generar-jwt.js';
 import bcryptjs from 'bcryptjs';
+import axios from 'axios';
 
 const login = async (req, res = response) => {
 
     const {mail, password} = req.body;
+    let datos = {}
+    let tipo = "Cliente"
 
     try{
 
@@ -13,27 +16,52 @@ const login = async (req, res = response) => {
         const cliente = await bdCliente.cliente.findOne({where: {mail}});
 
         if(!cliente){
-            return res.status(400).json({
-                msg: 'Correo o contraseña no son correctos - correo'
+
+            let status = true
+            await axios.post('http://3.93.230.167/api/artist/getOne', {
+                "email": mail,
+                "password": password
+            })
+            .then(function (response) {
+                datos = response.data.data;
+                tipo = "Artista";
+            })
+            .catch(function (error) {
+                datos = error.response.data;
+                status = error.response.data.status;
             });
+
+            if (!status){
+                return res.status(400).json({
+                    status: false,
+                    msg: 'Correo o contraseña no son correctos'
+                });
+            }
         }
 
-        // Verificar contraseña
-        const validPassword = bcryptjs.compareSync(password, cliente.password);
+        if (cliente){
+            // Verificar contraseña
+            const validPassword = bcryptjs.compareSync(password, cliente.password);
+        
+            if (!validPassword) {
+                return res.status(400).json({
+                    status: false,
+                    msg: 'Correo o contraseña no son correctos'
+                });
+            }
 
-        if (!validPassword) {
-            return res.status(400).json({
-                msg: 'Correo o contraseña no son correctos - password'
-            });
+            datos = cliente;
         }
 
-        //const {password, ...restoCliente} = cliente
+        console.log(datos.id);
 
         //Generar Token
-        const token = await Token.generarJWT(cliente.id);
+        const token = await Token.generarJWT(datos.id);
 
         res.json({
-            cliente,
+            status: true,
+            tipo,
+            datos,
             token
         })
 

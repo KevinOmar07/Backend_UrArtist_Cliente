@@ -11,7 +11,6 @@ router.get('/get/:idCliente', contratosController.contratosGet);
 router.post('/create', [
     check('datos.id_cliente', 'El id del cliente es obligatorio').not().isEmpty(),
     check('datos.id_artista', 'El id del artista es obligatorio').not().isEmpty(),
-    check('datos').custom(validacionesBD.favoritoDuplicado),
     validaciones.validarCampos,
 ], contratosController.contratoCreate);
 
