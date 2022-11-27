@@ -1,6 +1,7 @@
-import {response} from 'express'
+import {request, response} from 'express'
 import { bdCliente } from '../models/cliente.js';
 import bcryptjs from 'bcryptjs';
+import { contenido } from '../helpers/subir-imagen.js';
 
 const clienteGetId = async(req, res = response) => {
 
@@ -50,17 +51,23 @@ const clientePut = async (req, res = response) => {
     });
 }
 
-const clienteCreate = async (req, res = response) => {
+const clienteCreate = async (req = request, res = response) => {
+    
+    const {name, lastname, mail, password, number_phone, ...resto} = req.body;
 
-    const {name, lastname, mail, password, photo_profile, number_phone} = req.body;
-    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile, number_phone });
+    if (req.files['perfilfile']){
+        req.file = req.files['perfilfile'][0]
+        resto.img_profile = await cargar_imagen(req, res);
+    }
+    
+    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile: resto.img_profile, number_phone });
     
     // Encriptar contraseña
     const salts = bcryptjs.genSaltSync();
     client.password = bcryptjs.hashSync(password, salts);
     
     // Guardar en la BD
-    await client.save(); 
+    // await client.save();
     
     res.json({
         msg: 'Cliente registrado',
@@ -79,6 +86,11 @@ const clienteDelete = async (req, res = response) => {
         id,
         eliminado
     });
+}
+
+async function cargar_imagen(req, res) {    
+    const url = await contenido.create_image( req, res );
+    return url
 }
 
 export const clienteController = {

@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+
+import { cloudinaryConfig } from '../database/cloudynari.config.js'
 import cliente from '../routes/cliente.routes.js'
 import auth from '../routes/auth.routes.js'
 import favorito from '../routes/favorito.routes.js'
@@ -19,7 +21,7 @@ class Server {
 
         //Lectura y parseo del body
         this.app.use(express.json());
-        this.app.use(express.urlencoded({extended: true}));
+        this.app.use(express.urlencoded({ extended: true}));
 
         //Rutas del sevidor
         this.routes();
@@ -32,6 +34,8 @@ class Server {
 
         //Directorio publico
         this.app.use(express.static('public'))
+
+        this.app.use('*', cloudinaryConfig);
     }
 
     routes() {
