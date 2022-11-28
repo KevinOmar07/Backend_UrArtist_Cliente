@@ -28,13 +28,12 @@ router.put('/update/:idCliente', [
     validaciones.validarCampos,
 ], clienteController.clientePut);
 
-router.post('/create', [
-    // check('name', 'El nombre es obligatorio').not().isEmpty(),
-    // check('password', 'El password es obligatorio y debe ser de 8 caracteres o mas').not().isEmpty().isLength({min: 8}),
-    // check('mail', 'El correo no es valido').isEmail(),
-    // check('mail').custom(validacionesBD.emailExiste),
+router.post('/create', multerUploadsPerfil, [
+    check('name', 'El nombre es obligatorio').not().isEmpty(),
+    check('password', 'El password es obligatorio y debe ser de 8 caracteres o mas').not().isEmpty().isLength({min: 8}),
+    check('mail', 'El correo no es valido').isEmail(),
+    check('mail').custom(validacionesBD.emailExiste),
     validaciones.validarCampos,
-    multerUploadsPerfil,
 ], clienteController.clienteCreate);
 
 router.delete('/delete/:idCliente', [
