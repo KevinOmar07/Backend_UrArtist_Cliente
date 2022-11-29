@@ -11,10 +11,10 @@ class Server {
     constructor() {
         this.app = express();
         this.port = process.env.PORT;
-        this.clientePath = '/UrArtist/cliente';
-        this.authPath = '/UrArtist/auth';
-        this.favoritoPath = '/UrArtist/favoritos';
-        this.contratoPath = '/UrArtist/contratos';
+        this.clientePath = '/cliente';
+        this.authPath = '/auth';
+        this.favoritoPath = '/favoritos';
+        this.contratoPath = '/contratos';
 
         //Middlewares
         this.middleware();
