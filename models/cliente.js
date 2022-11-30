@@ -13,6 +13,8 @@ const cliente = getData.sequelize.define('clientes', {
     password: Sequelize.STRING,
     photo_profile: Sequelize.STRING,
     number_phone: Sequelize.STRING,
+    question_one: Sequelize.STRING,
+    question_two: Sequelize.STRING,
 },{
     Sequelize,
     paranoid: true,

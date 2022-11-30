@@ -53,21 +53,21 @@ const clientePut = async (req, res = response) => {
 
 const clienteCreate = async (req = request, res = response) => {
     
-    const {name, lastname, mail, password, number_phone, ...resto} = req.body;
+    const {name, lastname, mail, password, number_phone, question_one, question_two, ...resto} = req.body;
 
     if (req.files['perfilfile']){
         req.file = req.files['perfilfile'][0]
         resto.img_profile = await cargar_imagen(req, res);
     }
     
-    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile: resto.img_profile, number_phone });
+    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile: resto.img_profile, number_phone, question_one, question_two });
     
     // Encriptar contraseña
     const salts = bcryptjs.genSaltSync();
     client.password = bcryptjs.hashSync(password, salts);
     
     // Guardar en la BD
-    // await client.save();
+    await client.save();
     
     res.json({
         msg: 'Cliente registrado',
