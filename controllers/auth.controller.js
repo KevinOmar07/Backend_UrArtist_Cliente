@@ -18,7 +18,7 @@ const login = async (req, res = response) => {
         if(!cliente){
 
             let status = true
-            await axios.post('http://3.93.230.167/api/artist/getOne', {
+            await axios.post('http://3.93.230.167/artist/getOne', {
                 "email": mail,
                 "password": password
             })
