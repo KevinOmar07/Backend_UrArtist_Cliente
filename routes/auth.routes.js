@@ -12,4 +12,11 @@ router.post('/login', [
     validaciones.validarCampos,
 ], authController.login);
 
+router.get('/validarPreguntas', [
+    check('mail', 'El correo es obligatorio').isEmail(),
+    check('question_one', 'Las pregunta 1 de seguridad es obligatoria').not().isEmpty(),
+    check('question_two', 'Las pregunta 1 de seguridad es obligatoria').not().isEmpty(),
+    validaciones.validarCampos,
+], authController.validarPreguntas);
+
 export default router;

@@ -52,7 +52,7 @@ const login = async (req, res = response) => {
 
             datos = cliente;
         }
-        
+
         //Generar Token
         const token = await Token.generarJWT(datos.id);
 
@@ -71,6 +71,33 @@ const login = async (req, res = response) => {
     }
 }
 
+const validarPreguntas = async (req, res = response) => {
+    
+    const {mail, question_one, question_two} = req.body;
+
+    const cliente = await bdCliente.cliente.findOne({
+        where: {
+            mail,
+            question_one,
+            question_two
+        }
+    });
+
+    if (!cliente) {
+        return res.status(400).json({
+            status: false,
+            msg: 'El correo o la pregunta 1 o la pregunta 2 no son correctos'
+        });
+    }
+
+    return res.json({
+        status: true,
+        msg: 'Datos correctos'
+    });
+
+}
+
 export const authController = {
-    login
+    login,
+    validarPreguntas
 }
