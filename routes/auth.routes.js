@@ -19,4 +19,10 @@ router.get('/validarPreguntas', [
     validaciones.validarCampos,
 ], authController.validarPreguntas);
 
+router.put('/recuperarContrasena', [
+    check('mail', 'El correo es obligatorio').isEmail(),
+    check('pass', 'La contraseña es obligatoria').not().isEmpty(),
+    validaciones.validarCampos,
+], authController.recuperarContrasena);
+
 export default router;

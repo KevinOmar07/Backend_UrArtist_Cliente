@@ -97,7 +97,32 @@ const validarPreguntas = async (req, res = response) => {
 
 }
 
+const recuperarContrasena = async (req, res = response) => {
+    
+    const {mail, pass, ...resto} = req.body;
+
+    const salts = bcryptjs.genSaltSync();
+    resto.password = bcryptjs.hashSync(pass, salts);
+
+    const cliente = await bdCliente.cliente.update(resto, {where:{mail}});
+
+    if (cliente == 0) {
+        return res.status(400).json({
+            status: false,
+            msg: 'No se pudo actualizar la contrasena'
+        });
+    }
+
+    return res.json({
+        status: true,
+        msg: 'Contraseña actualizada'
+    });
+
+}
+
+
 export const authController = {
     login,
-    validarPreguntas
+    validarPreguntas,
+    recuperarContrasena
 }
