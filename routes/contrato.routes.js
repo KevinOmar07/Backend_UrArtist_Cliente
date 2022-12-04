@@ -14,11 +14,11 @@ router.post('/create', [
     validaciones.validarCampos,
 ], contratosController.contratoCreate);
 
-// router.delete('/delete/:idFavorito', [
-//     check('idFavorito', 'El ID es invalido').isInt(),
-//     check('idFavorito').custom(validacionesBD.favoritoExiste),
-//     validaciones.validarCampos,
-// ], favoritoController.favoritoDelete);
+router.delete('/delete/:idContrato', [
+    check('idContrato', 'El ID es invalido').isInt(),
+    // check('idContrato').custom(validacionesBD.favoritoExiste),
+    validaciones.validarCampos,
+], contratosController.contratoDelete);
 
 export default router;
 

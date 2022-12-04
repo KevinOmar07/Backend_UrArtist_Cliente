@@ -27,7 +27,21 @@ const contratoCreate = async (req, res = response) => {
     });
 }
 
+const contratoDelete = async (req, res = response) => {
+
+    const id  = req.params.idContrato;
+
+    const eliminado = await bdContratos.contratos.destroy({where: {id}});
+
+    res.json({
+        msg: 'Contrato eliminado',
+        id,
+        eliminado
+    });
+}
+
 export const contratosController = {
     contratosGet,
-    contratoCreate
+    contratoCreate,
+    contratoDelete
 }
