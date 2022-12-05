@@ -2,7 +2,7 @@ import {response} from 'express'
 import { bdCliente } from '../models/cliente.js';
 import { Token } from '../helpers/generar-jwt.js';
 import bcryptjs from 'bcryptjs';
-import axios from 'axios';
+import https from 'https';
 
 const login = async (req, res = response) => {
 
@@ -11,31 +11,32 @@ const login = async (req, res = response) => {
     let tipo = "Cliente"
 
     try{
-
         // Verificar si el email existe
         const cliente = await bdCliente.cliente.findOne({where: {mail}});
-
+        
         if(!cliente){
+            const huerfano = await peticion(mail, password, 'ozmotech.urartist.click', '/auth/login');
 
-            let status = true
-            await axios.post('https://www.ozmotecha.urartist.click//artist/getOne', {
-                "email": mail,
-                "password": password
-            })
-            .then(function (response) {
-                datos = response.data.data;
+            if (!huerfano.status){
+
+                const artista = await peticion(mail, password, 'ozmotecha.urartist.click', '/artist/getOne');
+
+                if (!artista.status){
+                    if (true){
+                        return res.status(400).json({
+                            status: false,
+                            msg: 'Correo o contraseña no son correctos'
+                        });
+                    }
+                }
+
+                datos = artista.data;
                 tipo = "Artista";
-            })
-            .catch(function (error) {
-                datos = error.response.data;
-                status = error.response.data.status;
-            });
+            }
 
-            if (!status){
-                return res.status(400).json({
-                    status: false,
-                    msg: 'Correo o contraseña no son correctos'
-                });
+            if (tipo !== "Artista"){
+                datos = huerfano.huerfano
+                tipo = "Huerfano"
             }
         }
 
@@ -120,6 +121,62 @@ const recuperarContrasena = async (req, res = response) => {
 
 }
 
+const peticion = async (mail, password, host, path) => {
+
+    const options = {
+        protocol: 'https:',
+        hostname: host,
+        port: 443,
+        method: 'POST',
+        path: path,
+        rejectUnauthorized: false,
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Basic TOKEN'
+        }
+    };
+
+    let postBody;
+
+    if (host === 'ozmotecha.urartist.click'){
+        postBody = {
+            email: mail,
+            password
+        }
+    } else {
+        postBody = {
+            mail,
+            password
+        }
+    }
+
+
+
+    return new Promise((resolve, reject) => {
+        const req = https.request(options, (res) => {
+            let body = '';
+            res.on('data', (chunk) => {
+                body += chunk;
+            });
+            
+            res.on('end', () => {
+                if (res.statusCode / 2 === 100 ) {
+                    resolve(JSON.parse(body));
+                }
+                else {
+                    resolve(JSON.parse(body));
+                }
+            });
+            res.on('error', () => {
+                console.log('error');
+                reject(Error('HTTP call failed'));
+            });
+        });
+        // The below 2 lines are most important part of the whole snippet.
+        req.write(JSON.stringify(postBody));
+        req.end();
+    });
+}
 
 export const authController = {
     login,
