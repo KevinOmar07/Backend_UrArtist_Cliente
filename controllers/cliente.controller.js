@@ -1,7 +1,8 @@
 import {request, response} from 'express'
 import { bdCliente } from '../models/cliente.js';
-import bcryptjs from 'bcryptjs';
 import { contenido } from '../helpers/subir-imagen.js';
+import bcryptjs from 'bcryptjs';
+import { apiExterno } from '../helpers/peticion.api.js';
 
 const clienteGetId = async(req, res = response) => {
 
@@ -55,24 +56,37 @@ const clienteCreate = async (req = request, res = response) => {
     
     const {name, lastname, mail, password, number_phone, question_one, question_two, ...resto} = req.body;
 
-    if (req.files['perfilfile']){
-        req.file = req.files['perfilfile'][0]
-        resto.img_profile = await cargar_imagen(req, res);
+    //const artista = await apiExterno.peticion(mail, 'ozmotecha.urartist.click', '/artist/exist', 'POST');
+    const huerfano = await apiExterno.peticion(mail, 'ozmotech.urartist.click', '/artistaHuerfano/validarCorreo', 'POST');
+
+    //console.log(`artista: ${artista.status} | Huerfano: ${huerfano.status}`);
+
+    if (!huerfano.status){
+        res.status(400).json({
+            status: false,
+            msg: "El correo ya se encuentra registrado"
+        })
+    } else {
+        if (req.files['perfilfile']){
+            req.file = req.files['perfilfile'][0]
+            resto.img_profile = await cargar_imagen(req, res);
+        }
+        
+        const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile: resto.img_profile, number_phone, question_one, question_two });
+        
+        // Encriptar contraseña
+        const salts = bcryptjs.genSaltSync();
+        client.password = bcryptjs.hashSync(password, salts);
+        
+        // Guardar en la BD
+        //await client.save();
+        
+        res.json({
+            msg: 'Cliente registrado',
+            client
+        });
     }
-    
-    const client = await new bdCliente.cliente({ name, lastname, mail, password, photo_profile: resto.img_profile, number_phone, question_one, question_two });
-    
-    // Encriptar contraseña
-    const salts = bcryptjs.genSaltSync();
-    client.password = bcryptjs.hashSync(password, salts);
-    
-    // Guardar en la BD
-    await client.save();
-    
-    res.json({
-        msg: 'Cliente registrado',
-        client
-    });
+
 }
 
 const clienteDelete = async (req, res = response) => {

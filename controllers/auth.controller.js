@@ -150,8 +150,6 @@ const peticion = async (mail, password, host, path) => {
         }
     }
 
-
-
     return new Promise((resolve, reject) => {
         const req = https.request(options, (res) => {
             let body = '';
@@ -160,13 +158,9 @@ const peticion = async (mail, password, host, path) => {
             });
             
             res.on('end', () => {
-                if (res.statusCode / 2 === 100 ) {
-                    resolve(JSON.parse(body));
-                }
-                else {
-                    resolve(JSON.parse(body));
-                }
+                resolve(JSON.parse(body));
             });
+
             res.on('error', () => {
                 console.log('error');
                 reject(Error('HTTP call failed'));
