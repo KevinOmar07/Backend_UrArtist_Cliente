@@ -38,6 +38,11 @@ const clientePut = async (req, res = response) => {
     const idCliente =  req.params.idCliente;
     const { id, password, ...resto } = req.body;
 
+    if (req.files['perfilfile']){
+        req.file = req.files['perfilfile'][0]
+        resto.photo_profile = await cargar_imagen(req, res);
+    }
+    
     // validar contraseña en la base de datos
     if ( password ){
         const salts = bcryptjs.genSaltSync();

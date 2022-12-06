@@ -22,7 +22,7 @@ router.get('/validarCorreo', [
     validaciones.validarCampos,
 ], clienteController.validarCorreo);
 
-router.put('/update/:idCliente', [
+router.put('/update/:idCliente', multerUploadsPerfil, [
     check('idCliente', 'El ID es invalido').isInt(),
     check('idCliente').custom(validacionesBD.clienteExiste),
     validaciones.validarCampos,
