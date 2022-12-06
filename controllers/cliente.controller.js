@@ -56,12 +56,10 @@ const clienteCreate = async (req = request, res = response) => {
     
     const {name, lastname, mail, password, number_phone, question_one, question_two, ...resto} = req.body;
 
-    //const artista = await apiExterno.peticion(mail, 'ozmotecha.urartist.click', '/artist/exist', 'POST');
+    const artista = await apiExterno.peticion(mail, 'ozmotecha.urartist.click', '/artist/exist', 'POST');
     const huerfano = await apiExterno.peticion(mail, 'ozmotech.urartist.click', '/artistaHuerfano/validarCorreo', 'POST');
 
-    //console.log(`artista: ${artista.status} | Huerfano: ${huerfano.status}`);
-
-    if (!huerfano.status){
+    if (artista.status || !huerfano.status){
         res.status(400).json({
             status: false,
             msg: "El correo ya se encuentra registrado"
@@ -79,7 +77,7 @@ const clienteCreate = async (req = request, res = response) => {
         client.password = bcryptjs.hashSync(password, salts);
         
         // Guardar en la BD
-        //await client.save();
+        await client.save();
         
         res.json({
             msg: 'Cliente registrado',
