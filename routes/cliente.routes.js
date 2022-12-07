@@ -17,7 +17,7 @@ router.get('/get/:idCliente', [
 
 router.get('/getAll', clienteController.clienteGet);
 
-router.get('/validarCorreo', [
+router.post('/validarCorreo', [
     check('mail').custom(validacionesBD.emailExiste), 
     validaciones.validarCampos,
 ], clienteController.validarCorreo);
