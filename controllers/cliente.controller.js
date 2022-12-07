@@ -74,7 +74,7 @@ const clienteCreate = async (req = request, res = response) => {
     if (artista.status || !huerfano.status){
         res.status(400).json({
             status: false,
-            msg: "El correo ya se encuentra registrado"
+            msg: "El correo ya se encuentra registrado, pruebe con otro"
         })
     } else {
         if (req.files['perfilfile']){
