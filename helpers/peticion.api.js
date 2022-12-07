@@ -1,6 +1,6 @@
 import https from 'https';
 
-const peticion = async (mail, host, path, metodo) => {
+const peticion = async (postBody, host, path, metodo) => {
 
     const options = {
         protocol: 'https:',
@@ -15,25 +15,12 @@ const peticion = async (mail, host, path, metodo) => {
         }
     };
 
-    let postBody;
-
-    if (host === 'ozmotecha.urartist.click'){
-        postBody = {
-            email: mail,
-        }
-    } else {
-        postBody = {
-            mail,
-        }
-    }
-
     return new Promise((resolve, reject) => {
         const req = https.request(options, (res) => {
             let body = '';
             res.on('data', (chunk) => {
                 body += chunk;
             });
-            
             res.on('end', () => {
                 resolve(JSON.parse(body));
             });
@@ -43,7 +30,7 @@ const peticion = async (mail, host, path, metodo) => {
                 reject(Error('HTTP call failed'));
             });
         });
-        // The below 2 lines are most important part of the whole snippet.
+        
         req.write(JSON.stringify(postBody));
         req.end();
     });

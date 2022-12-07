@@ -2,7 +2,7 @@ import {response} from 'express'
 import { bdCliente } from '../models/cliente.js';
 import { Token } from '../helpers/generar-jwt.js';
 import bcryptjs from 'bcryptjs';
-import https from 'https';
+import { apiExterno } from '../helpers/peticion.api.js';
 
 const login = async (req, res = response) => {
 
@@ -15,11 +15,12 @@ const login = async (req, res = response) => {
         const cliente = await bdCliente.cliente.findOne({where: {mail}});
         
         if(!cliente){
-            const huerfano = await peticion(mail, password, 'ozmotech.urartist.click', '/auth/login');
+            const bodyH = {mail, password}
+            const huerfano = await apiExterno.peticion(bodyH, 'ozmotech.urartist.click', '/auth/login', 'POST');
 
             if (!huerfano.status){
-
-                const artista = await peticion(mail, password, 'ozmotecha.urartist.click', '/artist/getOne');
+                const bodyA = {email: mail, password}
+                const artista = await apiExterno.peticion(bodyA, 'ozmotecha.urartist.click', '/artist/getOne', 'POST');
 
                 if (!artista.status){
                     if (true){
@@ -76,6 +77,7 @@ const validarPreguntas = async (req, res = response) => {
     
     const {mail, question_one, question_two} = req.body;
 
+    
     const cliente = await bdCliente.cliente.findOne({
         where: {
             mail,
@@ -85,15 +87,28 @@ const validarPreguntas = async (req, res = response) => {
     });
 
     if (!cliente) {
-        return res.status(400).json({
-            status: false,
-            msg: 'El correo o la pregunta 1 o la pregunta 2 no son correctos'
-        });
+        const bodyH = {mail, question_one, question_two}
+        const huerfano = await apiExterno.peticion(bodyH, 'ozmotech.urartist.click', '/auth/validarPreguntas', 'POST');
+
+        if (!huerfano.status){
+
+            const bodyA = {email: mail, question_1: question_one, question_2: question_two}
+            const artista = await apiExterno.peticion(bodyA, 'ozmotecha.urartist.click', '/artist/validarPreguntas', 'POST');
+
+            if (!artista.status){
+
+                return res.status(400).json({
+                    status: false,
+                    msg: 'El correo o las preguntas no son correctas'
+                });
+            }
+
+        }
     }
 
     return res.json({
         status: true,
-        msg: 'Datos correctos'
+        msg: 'Datos correctos',
     });
 
 }
@@ -108,10 +123,21 @@ const recuperarContrasena = async (req, res = response) => {
     const cliente = await bdCliente.cliente.update(resto, {where:{mail}});
 
     if (cliente == 0) {
-        return res.status(400).json({
-            status: false,
-            msg: 'No se pudo actualizar la contrasena'
-        });
+        const bodyH = {mail, pass}
+        const huerfano = await apiExterno.peticion(bodyH, 'ozmotech.urartist.click', '/auth/recuperarContrasena', 'PUT');
+
+        if (!huerfano.status){
+            const bodyA = {email: mail, password: pass}
+            const artista = await apiExterno.peticion(bodyA, 'ozmotecha.urartist.click', '/artist/recuperarContrasena', 'PUT');
+
+            if (!artista.status){
+
+                return res.status(400).json({
+                    status: false,
+                    msg: 'No se pudo actualizar la contrasena'
+                });
+            }
+        }
     }
 
     return res.json({
@@ -119,57 +145,6 @@ const recuperarContrasena = async (req, res = response) => {
         msg: 'Contraseña actualizada'
     });
 
-}
-
-const peticion = async (mail, password, host, path) => {
-
-    const options = {
-        protocol: 'https:',
-        hostname: host,
-        port: 443,
-        method: 'POST',
-        path: path,
-        rejectUnauthorized: false,
-        headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Basic TOKEN'
-        }
-    };
-
-    let postBody;
-
-    if (host === 'ozmotecha.urartist.click'){
-        postBody = {
-            email: mail,
-            password
-        }
-    } else {
-        postBody = {
-            mail,
-            password
-        }
-    }
-
-    return new Promise((resolve, reject) => {
-        const req = https.request(options, (res) => {
-            let body = '';
-            res.on('data', (chunk) => {
-                body += chunk;
-            });
-            
-            res.on('end', () => {
-                resolve(JSON.parse(body));
-            });
-
-            res.on('error', () => {
-                console.log('error');
-                reject(Error('HTTP call failed'));
-            });
-        });
-        // The below 2 lines are most important part of the whole snippet.
-        req.write(JSON.stringify(postBody));
-        req.end();
-    });
 }
 
 export const authController = {

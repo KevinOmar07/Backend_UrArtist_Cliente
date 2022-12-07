@@ -61,8 +61,11 @@ const clienteCreate = async (req = request, res = response) => {
     
     const {name, lastname, mail, password, number_phone, question_one, question_two, ...resto} = req.body;
 
-    const artista = await apiExterno.peticion(mail, 'ozmotecha.urartist.click', '/artist/exist', 'POST');
-    const huerfano = await apiExterno.peticion(mail, 'ozmotech.urartist.click', '/artistaHuerfano/validarCorreo', 'POST');
+    const bodyA = {email: mail}
+    const artista = await apiExterno.peticion(bodyA, 'ozmotecha.urartist.click', '/artist/exist', 'POST');
+
+    const bodyH = {mail}
+    const huerfano = await apiExterno.peticion(bodyH, 'ozmotech.urartist.click', '/artistaHuerfano/validarCorreo', 'POST');
 
     if (artista.status || !huerfano.status){
         res.status(400).json({
