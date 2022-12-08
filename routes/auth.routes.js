@@ -21,7 +21,7 @@ router.post('/validarPreguntas', [
 
 router.put('/recuperarContrasena', [
     check('mail', 'El correo es obligatorio').isEmail(),
-    check('pass', 'La contraseña es obligatoria').not().isEmpty(),
+    check('pass').not().isEmpty().withMessage('La contraseña es obligatoria').isLength({min: 8}).withMessage('La contraseña debe ser de minimo 8 caracteres'),
     validaciones.validarCampos,
 ], authController.recuperarContrasena);
 
